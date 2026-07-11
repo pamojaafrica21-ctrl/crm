@@ -59,7 +59,14 @@ class PropertyContext
         }
 
         if ($user->hasRole('Administrator')) {
-            return Property::where('is_active', true)->orderBy('name')->get();
+            $active = Property::where('is_active', true)->orderBy('name')->get();
+
+            if ($active->isNotEmpty()) {
+                return $active;
+            }
+
+            // Admins should never be locked out if properties exist but were deactivated.
+            return Property::orderBy('name')->get();
         }
 
         return $user->properties()->where('is_active', true)->orderBy('name')->get();
