@@ -25,6 +25,10 @@ class RolePermissionSeeder extends Seeder
             'reports.view', 'reports.export',
             'sync.view', 'sync.run',
             'announcements.view', 'announcements.create',
+            'rooms.manage',
+            'menu.manage',
+            'content.manage',
+            'reservations.view',
         ];
 
         foreach ($permissions as $permission) {
@@ -34,11 +38,11 @@ class RolePermissionSeeder extends Seeder
         $rolePermissions = [
             'Administrator' => $permissions,
             'Manager' => array_diff($permissions, ['staff.delete', 'sync.run']),
-            'Reception' => ['dashboard.view', 'customers.view', 'customers.create', 'customers.update', 'appointments.view', 'appointments.create', 'appointments.update', 'tasks.view', 'tasks.create', 'tasks.update', 'announcements.view'],
-            'Reservations' => ['dashboard.view', 'customers.view', 'customers.create', 'customers.update', 'appointments.view', 'appointments.create', 'appointments.update', 'tasks.view', 'tasks.create', 'announcements.view'],
+            'Reception' => ['dashboard.view', 'customers.view', 'customers.create', 'customers.update', 'appointments.view', 'appointments.create', 'appointments.update', 'tasks.view', 'tasks.create', 'tasks.update', 'announcements.view', 'reservations.view'],
+            'Reservations' => ['dashboard.view', 'customers.view', 'customers.create', 'customers.update', 'appointments.view', 'appointments.create', 'appointments.update', 'tasks.view', 'tasks.create', 'announcements.view', 'reservations.view', 'rooms.manage'],
             'Sales' => ['dashboard.view', 'customers.view', 'customers.create', 'customers.update', 'quotes.view', 'quotes.create', 'quotes.update', 'quotes.convert', 'invoices.view', 'invoices.create', 'invoices.update', 'payments.view', 'payments.create', 'appointments.view', 'appointments.create', 'appointments.update', 'targets.view', 'tasks.view', 'tasks.create', 'tasks.update', 'announcements.view'],
-            'Restaurant' => ['dashboard.view', 'customers.view', 'tasks.view', 'tasks.create', 'tasks.update', 'announcements.view'],
-            'Events' => ['dashboard.view', 'customers.view', 'customers.create', 'customers.update', 'appointments.view', 'appointments.create', 'appointments.update', 'tasks.view', 'tasks.create', 'announcements.view'],
+            'Restaurant' => ['dashboard.view', 'customers.view', 'tasks.view', 'tasks.create', 'tasks.update', 'announcements.view', 'menu.manage'],
+            'Events' => ['dashboard.view', 'customers.view', 'customers.create', 'customers.update', 'appointments.view', 'appointments.create', 'appointments.update', 'tasks.view', 'tasks.create', 'announcements.view', 'content.manage'],
             'Finance' => ['dashboard.view', 'customers.view', 'invoices.view', 'invoices.create', 'invoices.update', 'payments.view', 'payments.create', 'quotes.view', 'reports.view', 'reports.export', 'targets.view', 'announcements.view'],
         ];
 

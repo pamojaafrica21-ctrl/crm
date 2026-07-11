@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             PropertySeeder::class,
             RolePermissionSeeder::class,
             AdminSeeder::class,
+            PortalCatalogSeeder::class,
         ]);
     }
 }

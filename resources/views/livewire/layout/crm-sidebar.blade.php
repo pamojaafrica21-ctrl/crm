@@ -9,11 +9,15 @@ new class extends Component
         $items = [
             ['route' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'chart', 'permission' => 'dashboard.view'],
             ['route' => 'customers.index', 'label' => 'Customers', 'icon' => 'users', 'permission' => 'customers.view'],
+            ['route' => 'reservations.index', 'label' => 'Reservations', 'icon' => 'calendar', 'permission' => 'reservations.view'],
+            ['route' => 'rooms.index', 'label' => 'Rooms', 'icon' => 'rooms', 'permission' => 'rooms.manage'],
+            ['route' => 'menu.index', 'label' => 'Menu', 'icon' => 'menu', 'permission' => 'menu.manage'],
             ['route' => 'quotes.index', 'label' => 'Quotes', 'icon' => 'document', 'permission' => 'quotes.view'],
             ['route' => 'invoices.index', 'label' => 'Invoices', 'icon' => 'receipt', 'permission' => 'invoices.view'],
             ['route' => 'tasks.index', 'label' => 'Tasks', 'icon' => 'check', 'permission' => 'tasks.view'],
             ['route' => 'appointments.index', 'label' => 'Appointments', 'icon' => 'calendar', 'permission' => 'appointments.view'],
             ['route' => 'targets.index', 'label' => 'Targets', 'icon' => 'target', 'permission' => 'targets.view'],
+            ['route' => 'content.promotions', 'label' => 'Content', 'icon' => 'bell', 'permission' => 'content.manage'],
             ['route' => 'staff.index', 'label' => 'Staff', 'icon' => 'staff', 'permission' => 'staff.view'],
             ['route' => 'sync.index', 'label' => 'HMS Sync', 'icon' => 'sync', 'permission' => 'sync.view'],
             ['route' => 'announcements.index', 'label' => 'Announcements', 'icon' => 'bell', 'permission' => 'announcements.view'],
@@ -38,7 +42,7 @@ new class extends Component
         @foreach ($this->navItems() as $item)
             <a href="{{ route($item['route']) }}" wire:navigate
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors
-                      {{ request()->routeIs(str_replace('.index', '.*', $item['route'])) || request()->routeIs($item['route'])
+                      {{ request()->routeIs(str_replace('.index', '.*', $item['route'])) || request()->routeIs(str_replace('content.promotions', 'content.*', $item['route'])) || request()->routeIs($item['route'])
                          ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                 <span class="w-5 h-5 flex items-center justify-center opacity-70">
                     @switch($item['icon'])
@@ -52,6 +56,8 @@ new class extends Component
                         @case('staff') 👤 @break
                         @case('sync') 🔄 @break
                         @case('bell') 📢 @break
+                        @case('rooms') 🛏️ @break
+                        @case('menu') 🍽️ @break
                     @endswitch
                 </span>
                 {{ $item['label'] }}
@@ -59,7 +65,16 @@ new class extends Component
         @endforeach
     </nav>
 
-    <div class="p-4 border-t border-slate-700">
+    <div class="p-4 border-t border-slate-700 space-y-1">
+        @can('rooms.manage')
+            <a href="{{ route('rooms.extras') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white">Extras</a>
+        @endcan
+        @can('content.manage')
+            <a href="{{ route('content.coupons') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white">Coupons</a>
+            <a href="{{ route('content.faqs') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white">FAQs</a>
+            <a href="{{ route('content.inquiries') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white">Inquiries</a>
+            <a href="{{ route('content.reviews') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white">Reviews</a>
+        @endcan
         <a href="{{ route('profile') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white">
             ⚙️ Settings
         </a>

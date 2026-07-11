@@ -16,7 +16,7 @@ class EnsurePropertyAccess
         $propertyId = $this->propertyContext->id();
         $user = $request->user();
 
-        if ($propertyId && $user && ! $user->hasPropertyAccess($propertyId)) {
+        if ($propertyId && $user instanceof \App\Models\User && ! $user->hasPropertyAccess($propertyId)) {
             abort(403, 'You do not have access to this property.');
         }
 

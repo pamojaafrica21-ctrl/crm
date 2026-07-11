@@ -5,25 +5,36 @@ namespace App\Domain\Customers\Models;
 use App\Domain\Properties\Models\Property;
 use App\Domain\Shared\Models\Tag;
 use App\Domain\Shared\Traits\BelongsToProperty;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
-class Customer extends Model
+class Customer extends Authenticatable implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
-    use BelongsToProperty, LogsActivity, SoftDeletes;
+    use Authorizable;
+    use BelongsToProperty;
+    use CanResetPassword;
+    use LogsActivity;
+    use Notifiable;
+    use SoftDeletes;
 
     protected $fillable = [
         'property_id',
         'first_name',
         'last_name',
         'email',
+        'password',
         'phone',
         'nationality',
         'passport_number',
@@ -32,8 +43,16 @@ class Customer extends Model
         'company',
         'vip_level',
         'preferences',
+        'emergency_contact_name',
+        'emergency_contact_phone',
         'source',
         'is_active',
+        'email_verified_at',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     protected function casts(): array
@@ -41,17 +60,26 @@ class Customer extends Model
         return [
             'date_of_birth' => 'date',
             'is_active' => 'boolean',
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
         ];
     }
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logFillable();
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logExcept(['password', 'remember_token']);
     }
 
     public function fullName(): string
     {
         return trim("{$this->first_name} {$this->last_name}");
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->fullName();
     }
 
     public function property(): BelongsTo
@@ -112,5 +140,30 @@ class Customer extends Model
     public function tasks(): HasMany
     {
         return $this->hasMany(\App\Domain\Tasks\Models\Task::class);
+    }
+
+    public function loyaltyAccount(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\App\Domain\Content\Models\LoyaltyAccount::class);
+    }
+
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(\App\Domain\Content\Models\Favorite::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(\App\Domain\Content\Models\Review::class);
+    }
+
+    public function routeNotificationForMail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Infrastructure\Notifications\GuestResetPasswordNotification($token));
     }
 }

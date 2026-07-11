@@ -11,17 +11,19 @@ use Illuminate\Support\Facades\DB;
 
 class ConvertQuoteToInvoiceAction
 {
+    public function __construct(
+        private InvoiceNumberGenerator $invoiceNumbers,
+    ) {}
+
     public function execute(Quote $quote, int $userId): Invoice
     {
         return DB::transaction(function () use ($quote, $userId) {
-            $invoiceNumber = $this->nextInvoiceNumber($quote->property_id);
-
             $invoice = Invoice::create([
                 'property_id' => $quote->property_id,
                 'customer_id' => $quote->customer_id,
                 'quote_id' => $quote->id,
                 'created_by' => $userId,
-                'invoice_number' => $invoiceNumber,
+                'invoice_number' => $this->invoiceNumbers->next($quote->property_id),
                 'status' => InvoiceStatus::Sent,
                 'issue_date' => now()->toDateString(),
                 'due_date' => now()->addDays(30)->toDateString(),
@@ -51,14 +53,5 @@ class ConvertQuoteToInvoiceAction
 
             return $invoice;
         });
-    }
-
-    private function nextInvoiceNumber(int $propertyId): string
-    {
-        $count = Invoice::withoutGlobalScope('property')
-            ->where('property_id', $propertyId)
-            ->count() + 1;
-
-        return sprintf('INV-%04d-%05d', $propertyId, $count);
     }
 }

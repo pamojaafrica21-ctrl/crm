@@ -3,9 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Route::redirect('/', '/login');
-
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'property', 'property.access'])->group(function () {
     Volt::route('dashboard', 'pages.dashboard.index')->name('dashboard');
 
     Volt::route('customers', 'pages.customers.index')->name('customers.index');
@@ -33,6 +31,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Volt::route('staff', 'pages.staff.index')->name('staff.index');
     Volt::route('sync', 'pages.sync.index')->name('sync.index');
     Volt::route('announcements', 'pages.announcements.index')->name('announcements.index');
+
+    Volt::route('manage/rooms', 'pages.rooms.index')->name('rooms.index');
+    Volt::route('manage/rooms/create', 'pages.rooms.create')->name('rooms.create');
+    Volt::route('manage/rooms/extras', 'pages.rooms.extras')->name('rooms.extras');
+    Volt::route('manage/rooms/{roomType}', 'pages.rooms.show')->name('rooms.show');
+
+    Volt::route('manage/reservations', 'pages.reservations.index')->name('reservations.index');
+
+    Volt::route('manage/menu', 'pages.menu.index')->name('menu.index');
+    Volt::route('manage/menu/items', 'pages.menu.items')->name('menu.items');
+
+    Volt::route('manage/content/promotions', 'pages.content.promotions')->name('content.promotions');
+    Volt::route('manage/content/coupons', 'pages.content.coupons')->name('content.coupons');
+    Volt::route('manage/content/faqs', 'pages.content.faqs')->name('content.faqs');
+    Volt::route('manage/content/inquiries', 'pages.content.inquiries')->name('content.inquiries');
+    Volt::route('manage/content/reviews', 'pages.content.reviews')->name('content.reviews');
 
     Route::view('profile', 'profile')->name('profile');
 });

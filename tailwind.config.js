@@ -13,6 +13,15 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                portal: ['Outfit', ...defaultTheme.fontFamily.sans],
+                display: ['Cormorant Garamond', ...defaultTheme.fontFamily.serif],
+            },
+            colors: {
+                portal: {
+                    ink: '#1c1917',
+                    sand: '#f5f0e8',
+                    amber: '#d97706',
+                },
             },
         },
     },
