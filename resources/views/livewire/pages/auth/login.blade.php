@@ -25,46 +25,50 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <div class="mb-6">
-        <h1 class="text-xl font-bold text-slate-900">{{ __('Sign in') }}</h1>
-        <p class="mt-1 text-sm text-slate-500">{{ __('Welcome back. Enter your credentials to continue.') }}</p>
+    <div class="mb-8">
+        <h2 class="font-display text-3xl font-semibold text-[#143529] tracking-tight">{{ __('Sign in') }}</h2>
+        <p class="mt-2 text-sm text-stone-600 leading-relaxed">
+            {{ __('Enter your staff email and password to open the CRM.') }}
+        </p>
     </div>
 
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form wire:submit="login" class="space-y-4">
+    <form wire:submit="login" class="space-y-5">
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="form.email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus autocomplete="username" />
+            <label for="email" class="block text-sm font-medium text-stone-700 mb-1.5">{{ __('Email') }}</label>
+            <input wire:model="form.email" id="email" type="email" name="email" required autofocus autocomplete="username"
+                   class="block w-full rounded-xl border-stone-300 bg-white/80 shadow-sm focus:border-[#143529] focus:ring-[#143529] text-stone-900">
             <x-input-error :messages="$errors->get('form.email')" class="mt-2" />
         </div>
 
         <div>
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input wire:model="form.password" id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+            <label for="password" class="block text-sm font-medium text-stone-700 mb-1.5">{{ __('Password') }}</label>
+            <input wire:model="form.password" id="password" type="password" name="password" required autocomplete="current-password"
+                   class="block w-full rounded-xl border-stone-300 bg-white/80 shadow-sm focus:border-[#143529] focus:ring-[#143529] text-stone-900">
             <x-input-error :messages="$errors->get('form.password')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-between">
-            <label for="remember" class="inline-flex items-center">
-                <input wire:model="form.remember" id="remember" type="checkbox" class="rounded border-slate-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-slate-600">{{ __('Remember me') }}</span>
+        <div class="flex items-center justify-between gap-3 pt-1">
+            <label for="remember" class="inline-flex items-center gap-2">
+                <input wire:model="form.remember" id="remember" type="checkbox" name="remember"
+                       class="rounded border-stone-300 text-[#143529] shadow-sm focus:ring-[#143529]">
+                <span class="text-sm text-stone-600">{{ __('Remember me') }}</span>
             </label>
 
             @if (Route::has('password.request'))
-                <a class="text-sm text-indigo-600 hover:text-indigo-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}" wire:navigate>
-                    {{ __('Forgot your password?') }}
+                <a class="text-sm font-medium text-[#1a4535] hover:text-[#0f2f24] underline-offset-4 hover:underline"
+                   href="{{ route('password.request') }}" wire:navigate>
+                    {{ __('Forgot password?') }}
                 </a>
             @endif
         </div>
 
         <div class="pt-2">
-            <x-primary-button class="w-full justify-center">
+            <button type="submit"
+                    class="w-full inline-flex items-center justify-center rounded-xl bg-[#143529] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#0f2f24] focus:outline-none focus:ring-2 focus:ring-[#143529] focus:ring-offset-2 focus:ring-offset-[#f3efe6]">
                 {{ __('Log in') }}
-            </x-primary-button>
+            </button>
         </div>
     </form>
 </div>
