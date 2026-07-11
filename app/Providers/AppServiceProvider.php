@@ -18,7 +18,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::before(function ($user, $ability) {
-            if ($user->hasRole('Administrator')) {
+            // Super admins always have full access (bypass Spatie cache quirks).
+            if (
+                method_exists($user, 'hasRole')
+                && (
+                    $user->hasRole('Administrator')
+                    || $user->roles()->where('name', 'Administrator')->exists()
+                )
+            ) {
                 return true;
             }
 
