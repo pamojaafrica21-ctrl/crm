@@ -37,17 +37,21 @@ new class extends Component
 <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between shrink-0">
     <div class="flex items-center gap-4">
         @if ($this->activeProperty())
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-slate-500 uppercase tracking-wide">Property</span>
-                <select wire:change="switchProperty($event.target.value)"
-                        class="text-sm font-medium border-slate-200 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
-                    @foreach ($this->properties() as $property)
-                        <option value="{{ $property->id }}" @selected($property->id === $this->activeProperty()?->id)>
-                            {{ $property->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            @if ($this->properties()->count() > 1)
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-500 uppercase tracking-wide">Property</span>
+                    <select wire:change="switchProperty($event.target.value)"
+                            class="text-sm font-medium border-slate-200 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        @foreach ($this->properties() as $property)
+                            <option value="{{ $property->id }}" @selected($property->id === $this->activeProperty()?->id)>
+                                {{ $property->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @else
+                <div class="text-sm font-medium text-slate-800">{{ $this->activeProperty()->name }}</div>
+            @endif
         @endif
     </div>
 

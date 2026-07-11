@@ -9,14 +9,27 @@ class PropertySeeder extends Seeder
 {
     public function run(): void
     {
-        $properties = [
-            ['name' => 'Grand Plaza Hotel', 'code' => 'GPH', 'timezone' => 'America/New_York', 'currency' => 'USD', 'address' => '123 Main Street, New York, NY'],
-            ['name' => 'Seaside Resort & Spa', 'code' => 'SRS', 'timezone' => 'America/Los_Angeles', 'currency' => 'USD', 'address' => '456 Ocean Drive, Miami, FL'],
-            ['name' => 'Mountain Lodge Retreat', 'code' => 'MLR', 'timezone' => 'America/Denver', 'currency' => 'USD', 'address' => '789 Alpine Way, Aspen, CO'],
+        $attributes = [
+            'name' => 'Montana Resort',
+            'timezone' => 'Africa/Nairobi',
+            'currency' => 'USD',
+            'address' => 'Montana Resort',
+            'is_active' => true,
         ];
 
-        foreach ($properties as $property) {
-            Property::firstOrCreate(['code' => $property['code']], $property);
+        // Prefer the existing Montana record; otherwise upgrade the oldest property
+        // so demo data stays attached to the single company.
+        $montana = Property::where('code', 'MR')->first()
+            ?? Property::orderBy('id')->first();
+
+        if ($montana) {
+            $montana->update(array_merge($attributes, ['code' => 'MR']));
+        } else {
+            $montana = Property::create(array_merge($attributes, ['code' => 'MR']));
         }
+
+        Property::query()
+            ->where('id', '!=', $montana->id)
+            ->update(['is_active' => false]);
     }
 }

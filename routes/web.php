@@ -31,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Volt::route('targets/create', 'pages.targets.create')->name('targets.create');
 
     Volt::route('staff', 'pages.staff.index')->name('staff.index');
+    Volt::route('reports', 'pages.reports.index')->name('reports.index');
     Volt::route('sync', 'pages.sync.index')->name('sync.index');
     Volt::route('announcements', 'pages.announcements.index')->name('announcements.index');
 

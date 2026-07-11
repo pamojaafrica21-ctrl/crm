@@ -7,11 +7,14 @@ use App\Domain\Properties\Models\Property;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AdminSeeder extends Seeder
 {
     public function run(): void
     {
+        $property = Property::where('code', 'MR')->first() ?? Property::where('is_active', true)->first();
+
         $admin = User::firstOrCreate(
             ['email' => 'admin@crm.test'],
             [
@@ -24,12 +27,14 @@ class AdminSeeder extends Seeder
         );
 
         $admin->assignRole('Administrator');
-        $admin->properties()->sync(Property::pluck('id'));
+        if ($property) {
+            $admin->properties()->sync([$property->id]);
+        }
 
-        $manager = User::firstOrCreate(
+        $manager = User::updateOrCreate(
             ['email' => 'manager@crm.test'],
             [
-                'name' => 'Hotel Manager',
+                'name' => 'Resort Manager',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
                 'department' => 'Management',
@@ -38,7 +43,12 @@ class AdminSeeder extends Seeder
         );
 
         $manager->assignRole('Manager');
-        $manager->properties()->sync(Property::pluck('id'));
+        $manager->syncPermissions(
+            Role::findByName('Manager')->permissions->pluck('name')
+        );
+        if ($property) {
+            $manager->properties()->sync([$property->id]);
+        }
 
         $sales = User::firstOrCreate(
             ['email' => 'sales@crm.test'],
@@ -52,13 +62,18 @@ class AdminSeeder extends Seeder
         );
 
         $sales->assignRole('Sales');
-        $sales->properties()->sync([Property::first()->id]);
+        $sales->syncPermissions(
+            Role::findByName('Sales')->permissions->pluck('name')
+        );
+        if ($property) {
+            $sales->properties()->sync([$property->id]);
+        }
 
-        Property::each(function (Property $property) {
+        if ($property) {
             $types = [
                 ['name' => 'Guest Consultation', 'color' => '#3b82f6', 'default_duration_minutes' => 30],
                 ['name' => 'Sales Meeting', 'color' => '#10b981', 'default_duration_minutes' => 60],
-                ['name' => 'Property Tour', 'color' => '#f59e0b', 'default_duration_minutes' => 45],
+                ['name' => 'Resort Tour', 'color' => '#f59e0b', 'default_duration_minutes' => 45],
                 ['name' => 'Event Consultation', 'color' => '#8b5cf6', 'default_duration_minutes' => 90],
             ];
 
@@ -68,6 +83,6 @@ class AdminSeeder extends Seeder
                     array_merge($type, ['property_id' => $property->id])
                 );
             }
-        });
+        }
     }
 }

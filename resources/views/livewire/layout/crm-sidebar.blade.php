@@ -14,6 +14,7 @@ new class extends Component
             ['route' => 'tasks.index', 'label' => 'Tasks', 'icon' => 'check', 'permission' => 'tasks.view'],
             ['route' => 'appointments.index', 'label' => 'Appointments', 'icon' => 'calendar', 'permission' => 'appointments.view'],
             ['route' => 'targets.index', 'label' => 'Targets', 'icon' => 'target', 'permission' => 'targets.view'],
+            ['route' => 'reports.index', 'label' => 'Reports', 'icon' => 'reports', 'permission' => 'reports.view'],
             ['route' => 'staff.index', 'label' => 'Staff', 'icon' => 'staff', 'permission' => 'staff.view'],
             ['route' => 'sync.index', 'label' => 'HMS Sync', 'icon' => 'sync', 'permission' => 'sync.view'],
             ['route' => 'announcements.index', 'label' => 'Announcements', 'icon' => 'bell', 'permission' => 'announcements.view'],
@@ -26,10 +27,10 @@ new class extends Component
 <aside class="w-64 bg-slate-900 text-white flex flex-col shrink-0">
     <div class="p-5 border-b border-slate-700">
         <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-3">
-            <div class="w-9 h-9 bg-indigo-500 rounded-lg flex items-center justify-center font-bold text-sm">HC</div>
+            <div class="w-9 h-9 bg-indigo-500 rounded-lg flex items-center justify-center font-bold text-sm">MR</div>
             <div>
-                <div class="font-semibold text-sm">{{ config('app.name', 'Hotel CRM') }}</div>
-                <div class="text-xs text-slate-400">Management System</div>
+                <div class="font-semibold text-sm">{{ config('app.name', 'Montana Resort') }}</div>
+                <div class="text-xs text-slate-400">Staff CRM</div>
             </div>
         </a>
     </div>
@@ -49,6 +50,7 @@ new class extends Component
                         @case('check') ✅ @break
                         @case('calendar') 📅 @break
                         @case('target') 🎯 @break
+                        @case('reports') 📈 @break
                         @case('staff') 👤 @break
                         @case('sync') 🔄 @break
                         @case('bell') 📢 @break
@@ -60,7 +62,10 @@ new class extends Component
     </nav>
 
     <div class="p-4 border-t border-slate-700">
-        <a href="{{ route('profile') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white">
+        <a href="{{ route('profile') }}" wire:navigate
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors
+                  {{ request()->routeIs('profile')
+                     ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
             ⚙️ Settings
         </a>
     </div>

@@ -21,6 +21,14 @@ class AppServiceProvider extends ServiceProvider
             if ($user->hasRole('Administrator')) {
                 return true;
             }
+
+            // When staff access has been customized, direct permissions are the source of truth
+            // so give/revoke on the staff page can both grant and remove page/action access.
+            if (method_exists($user, 'getDirectPermissions') && $user->getDirectPermissions()->isNotEmpty()) {
+                return $user->hasDirectPermission($ability);
+            }
+
+            return null;
         });
 
         Event::listen(Login::class, function (Login $event): void {
