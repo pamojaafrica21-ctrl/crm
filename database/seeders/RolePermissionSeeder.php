@@ -25,6 +25,7 @@ class RolePermissionSeeder extends Seeder
             'reports.view', 'reports.export',
             'sync.view', 'sync.run',
             'announcements.view', 'announcements.create',
+            'billing.view', 'billing.manage',
         ];
 
         foreach ($permissions as $permission) {
@@ -33,13 +34,13 @@ class RolePermissionSeeder extends Seeder
 
         $rolePermissions = [
             'Administrator' => $permissions,
-            'Manager' => array_diff($permissions, ['staff.delete', 'sync.run']),
+            'Manager' => array_values(array_diff($permissions, ['staff.delete', 'sync.run', 'billing.manage'])),
             'Reception' => ['dashboard.view', 'customers.view', 'customers.create', 'customers.update', 'appointments.view', 'appointments.create', 'appointments.update', 'tasks.view', 'tasks.create', 'tasks.update', 'announcements.view'],
             'Reservations' => ['dashboard.view', 'customers.view', 'customers.create', 'customers.update', 'appointments.view', 'appointments.create', 'appointments.update', 'tasks.view', 'tasks.create', 'announcements.view'],
             'Sales' => ['dashboard.view', 'customers.view', 'customers.create', 'customers.update', 'quotes.view', 'quotes.create', 'quotes.update', 'quotes.convert', 'invoices.view', 'invoices.create', 'invoices.update', 'payments.view', 'payments.create', 'appointments.view', 'appointments.create', 'appointments.update', 'targets.view', 'tasks.view', 'tasks.create', 'tasks.update', 'reports.view', 'reports.export', 'announcements.view'],
             'Restaurant' => ['dashboard.view', 'customers.view', 'tasks.view', 'tasks.create', 'tasks.update', 'announcements.view'],
             'Events' => ['dashboard.view', 'customers.view', 'customers.create', 'customers.update', 'appointments.view', 'appointments.create', 'appointments.update', 'tasks.view', 'tasks.create', 'announcements.view'],
-            'Finance' => ['dashboard.view', 'customers.view', 'invoices.view', 'invoices.create', 'invoices.update', 'payments.view', 'payments.create', 'quotes.view', 'reports.view', 'reports.export', 'targets.view', 'announcements.view'],
+            'Finance' => ['dashboard.view', 'customers.view', 'invoices.view', 'invoices.create', 'invoices.update', 'payments.view', 'payments.create', 'quotes.view', 'reports.view', 'reports.export', 'targets.view', 'announcements.view', 'billing.view', 'billing.manage'],
         ];
 
         foreach ($rolePermissions as $roleName => $perms) {

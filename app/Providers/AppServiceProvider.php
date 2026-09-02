@@ -2,23 +2,42 @@
 
 namespace App\Providers;
 
+use App\Domain\Organizations\Models\Organization;
+use App\Domain\Organizations\Services\OrganizationContext;
 use App\Domain\Properties\Services\PropertyContext;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Events\Login;
+use Laravel\Cashier\Cashier;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         $this->app->singleton(PropertyContext::class);
+        $this->app->singleton(OrganizationContext::class);
     }
 
     public function boot(): void
     {
+        Cashier::useCustomerModel(Organization::class);
+        Cashier::ignoreRoutes();
+
         Gate::before(function ($user, $ability) {
-            // Super admins always have full access (bypass Spatie cache quirks).
+            if ($user->is_super_admin ?? false) {
+                return true;
+            }
+
+            // Organisation owner can always manage billing for their company.
+            if (in_array($ability, ['billing.manage', 'billing.view'], true)
+                && method_exists($user, 'organization')
+                && $user->organization?->isOwnedBy($user)
+            ) {
+                return true;
+            }
+
+            // Org administrators always have full access within their organization.
             if (
                 method_exists($user, 'hasRole')
                 && (

@@ -32,16 +32,28 @@ new class extends Component
 
     public function with(): array
     {
+        $query = User::with(['roles.permissions', 'properties', 'permissions'])
+            ->where('is_super_admin', false)
+            ->orderBy('name');
+
+        if (auth()->user()?->organization_id) {
+            $query->where('organization_id', auth()->user()->organization_id);
+        }
+
         return [
-            'staff' => User::with(['roles.permissions', 'properties', 'permissions'])
-                ->orderBy('name')
-                ->paginate(15),
+            'staff' => $query->paginate(15),
         ];
     }
 
     public function properties()
     {
-        return Property::where('is_active', true)->orderBy('name')->get();
+        $query = Property::where('is_active', true)->orderBy('name');
+
+        if (auth()->user()?->organization_id) {
+            $query->where('organization_id', auth()->user()->organization_id);
+        }
+
+        return $query->get();
     }
 
     public function roles()
@@ -64,6 +76,7 @@ new class extends Component
             'reports' => 'Reports',
             'sync' => 'HMS Sync',
             'announcements' => 'Announcements',
+            'billing' => 'Billing',
         ];
 
         $actionLabels = [
@@ -74,6 +87,7 @@ new class extends Component
             'convert' => 'Convert',
             'export' => 'Export',
             'run' => 'Run sync',
+            'manage' => 'Manage subscription',
         ];
 
         $groups = [];
@@ -177,8 +191,12 @@ new class extends Component
             'department' => $this->department ?: null,
             'email_verified_at' => now(),
             'is_active' => true,
+            'organization_id' => auth()->user()->organization_id,
         ]);
 
+        if (auth()->user()->organization_id) {
+            setPermissionsTeamId(auth()->user()->organization_id);
+        }
         $user->syncRoles([$this->role]);
         $user->syncPermissions($this->role === 'Administrator' ? [] : $this->permissions);
         $user->properties()->sync($this->resolvedPropertyIds());
@@ -216,6 +234,9 @@ new class extends Component
             'department' => $this->department ?: null,
         ]);
 
+        if (auth()->user()->organization_id) {
+            setPermissionsTeamId(auth()->user()->organization_id);
+        }
         $user->syncRoles([$this->role]);
         $user->syncPermissions($this->role === 'Administrator' ? [] : $this->permissions);
         $user->properties()->sync($this->resolvedPropertyIds());
@@ -350,9 +371,9 @@ new class extends Component
                     @else
                         <label class="block text-sm font-medium text-slate-700 mb-1">Company</label>
                         <p class="text-sm text-slate-700 rounded-lg border border-slate-200 px-3 py-2 bg-slate-50">
-                            {{ $this->properties()->first()?->name ?? 'Montana Resort' }}
+                            {{ $this->properties()->first()?->name ?? 'Main Property' }}
                         </p>
-                        <p class="mt-1 text-xs text-slate-500">All staff belong to Montana Resort.</p>
+                        <p class="mt-1 text-xs text-slate-500">Staff are scoped to your organisation’s properties.</p>
                     @endif
                 </div>
             </div>

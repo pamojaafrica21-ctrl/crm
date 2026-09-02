@@ -58,15 +58,24 @@ class PropertyContext
             return collect();
         }
 
+        if ($user->is_super_admin) {
+            return Property::where('is_active', true)->orderBy('name')->get();
+        }
+
+        $query = Property::query()->where('is_active', true);
+
+        if ($user->organization_id) {
+            $query->where('organization_id', $user->organization_id);
+        }
+
         if ($user->hasRole('Administrator')) {
-            $active = Property::where('is_active', true)->orderBy('name')->get();
+            $active = $query->orderBy('name')->get();
 
             if ($active->isNotEmpty()) {
                 return $active;
             }
 
-            // Admins should never be locked out if properties exist but were deactivated.
-            return Property::orderBy('name')->get();
+            return Property::where('organization_id', $user->organization_id)->orderBy('name')->get();
         }
 
         return $user->properties()->where('is_active', true)->orderBy('name')->get();

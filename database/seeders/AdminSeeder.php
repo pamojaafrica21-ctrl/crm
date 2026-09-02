@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Domain\Appointments\Models\AppointmentType;
+use App\Domain\Organizations\Models\Organization;
 use App\Domain\Properties\Models\Property;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -13,7 +14,8 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $property = Property::where('code', 'MR')->first() ?? Property::where('is_active', true)->first();
+        $org = Organization::whereIn('slug', ['demo-organisation', 'montana-resort'])->first();
+        $property = Property::whereIn('code', ['MAIN', 'MR'])->first() ?? Property::where('is_active', true)->first();
 
         $admin = User::firstOrCreate(
             ['email' => 'admin@crm.test'],
@@ -23,12 +25,20 @@ class AdminSeeder extends Seeder
                 'email_verified_at' => now(),
                 'department' => 'Management',
                 'is_active' => true,
+                'organization_id' => $org?->id,
             ]
         );
 
+        if ($org) {
+            setPermissionsTeamId($org->id);
+        }
         $admin->assignRole('Administrator');
         if ($property) {
             $admin->properties()->sync([$property->id]);
+        }
+
+        if ($org && ! $org->owner_id) {
+            $org->update(['owner_id' => $admin->id]);
         }
 
         $manager = User::updateOrCreate(
@@ -39,9 +49,13 @@ class AdminSeeder extends Seeder
                 'email_verified_at' => now(),
                 'department' => 'Management',
                 'is_active' => true,
+                'organization_id' => $org?->id,
             ]
         );
 
+        if ($org) {
+            setPermissionsTeamId($org->id);
+        }
         $manager->assignRole('Manager');
         $manager->syncPermissions(
             Role::findByName('Manager')->permissions->pluck('name')
@@ -58,9 +72,13 @@ class AdminSeeder extends Seeder
                 'email_verified_at' => now(),
                 'department' => 'Sales',
                 'is_active' => true,
+                'organization_id' => $org?->id,
             ]
         );
 
+        if ($org) {
+            setPermissionsTeamId($org->id);
+        }
         $sales->assignRole('Sales');
         $sales->syncPermissions(
             Role::findByName('Sales')->permissions->pluck('name')

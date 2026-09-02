@@ -4,8 +4,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-
-        <title>{{ config('app.name', 'Montana Resort') }} — Staff CRM</title>
+        <x-favicon />
+        <title>{{ config('app.name', 'Core CRM') }}</title>
+        <meta name="robots" content="noindex, follow">
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|fraunces:500,600,700&display=swap" rel="stylesheet" />
@@ -27,25 +28,23 @@
 
                 <div class="animate-fade-in">
                     <div class="inline-flex items-center gap-3">
-                        <div class="w-11 h-11 rounded-xl bg-white/15 backdrop-blur-sm ring-1 ring-white/25 flex items-center justify-center font-semibold tracking-wide">
-                            MR
-                        </div>
+                        <img src="{{ asset('favicon-32x32.png') }}" alt="{{ config('app.name', 'Core CRM') }}" width="44" height="44" class="w-11 h-11 rounded-xl ring-1 ring-white/25">
                         <span class="text-sm font-medium text-emerald-100/80 tracking-wide">Staff portal</span>
                     </div>
                 </div>
 
                 <div class="mt-12 lg:mt-0 max-w-lg animate-fade-up" style="animation-delay: 120ms">
-                    <p class="text-emerald-100/70 text-sm uppercase tracking-[0.2em] mb-4">Montana Resort</p>
+                    <p class="text-emerald-100/70 text-sm uppercase tracking-[0.2em] mb-4">{{ config('app.name', 'Core CRM') }}</p>
                     <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.05] text-white">
-                        Welcome back to the hills.
+                        Welcome back.
                     </h1>
                     <p class="mt-5 text-base sm:text-lg text-emerald-50/75 leading-relaxed max-w-md">
-                        Sign in to manage guests, quotes, invoices, and day-to-day operations for Montana Resort.
+                        Sign in to manage guests, quotes, invoices, and day-to-day operations for your organisation.
                     </p>
                 </div>
 
                 <div class="mt-10 lg:mt-0 text-sm text-emerald-100/55 animate-fade-in" style="animation-delay: 280ms">
-                    Secure staff access · {{ config('app.name', 'Montana Resort') }} CRM
+                    Secure staff access · {{ config('app.name', 'Core CRM') }}
                 </div>
             </aside>
 
@@ -58,8 +57,8 @@
 
                 <div class="relative w-full max-w-md animate-fade-up" style="animation-delay: 180ms">
                     <div class="lg:hidden mb-8">
-                        <div class="font-display text-2xl font-semibold text-[#143529]">{{ config('app.name', 'Montana Resort') }}</div>
-                        <div class="text-sm text-stone-500 mt-1">Staff CRM</div>
+                        <div class="font-display text-2xl font-semibold text-[#143529]">{{ config('app.name', 'Core CRM') }}</div>
+                        <div class="text-sm text-stone-500 mt-1">Staff portal</div>
                     </div>
 
                     {{ $slot }}

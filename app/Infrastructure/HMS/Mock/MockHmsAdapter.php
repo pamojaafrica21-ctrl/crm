@@ -107,8 +107,8 @@ class MockHmsAdapter implements HmsAdapterInterface
     public function fetchStaff(int $propertyId, ?\DateTimeInterface $since = null): array
     {
         return [
-            new HmsStaffDto("S{$propertyId}001", 'Front', 'Desk', "frontdesk@montanaresort.test", 'Reception', '+1-555-1001'),
-            new HmsStaffDto("S{$propertyId}002", 'Sales', 'Rep', "sales@montanaresort.test", 'Sales', '+1-555-1002'),
+            new HmsStaffDto("S{$propertyId}001", 'Front', 'Desk', "frontdesk@corecrm.test", 'Reception', '+1-555-1001'),
+            new HmsStaffDto("S{$propertyId}002", 'Sales', 'Rep', "sales@corecrm.test", 'Sales', '+1-555-1002'),
         ];
     }
 }

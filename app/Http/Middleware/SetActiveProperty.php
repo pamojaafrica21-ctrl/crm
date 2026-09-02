@@ -16,18 +16,24 @@ class SetActiveProperty
         $user = $request->user();
 
         if ($user) {
+            if ($user->is_super_admin) {
+                return $next($request);
+            }
+
             $available = $this->propertyContext->availableForUser($user);
 
             if ($available->isEmpty()) {
-                // Administrators: ensure a default property exists so they are never locked out.
-                if ($user->hasRole('Administrator')) {
+                if ($user->hasRole('Administrator') && $user->organization_id) {
                     $property = \App\Domain\Properties\Models\Property::firstOrCreate(
-                        ['code' => 'MR'],
                         [
-                            'name' => 'Montana Resort',
+                            'organization_id' => $user->organization_id,
+                            'code' => 'MAIN',
+                        ],
+                        [
+                            'name' => $user->organization?->name ?? 'Main Property',
                             'timezone' => 'Africa/Nairobi',
                             'currency' => 'USD',
-                            'address' => 'Montana Resort',
+                            'address' => '',
                             'is_active' => true,
                         ]
                     );
@@ -39,7 +45,7 @@ class SetActiveProperty
                     $user->properties()->syncWithoutDetaching([$property->id]);
                     $available = collect([$property]);
                 } else {
-                    abort(403, 'No property access assigned. Ask an administrator to grant you Montana Resort access.');
+                    abort(403, 'No property access assigned. Ask an administrator to grant you property access.');
                 }
             }
 

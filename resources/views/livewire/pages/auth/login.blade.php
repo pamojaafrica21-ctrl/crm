@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Forms\LoginForm;
+use App\Domain\Billing\Services\HomepageContentService;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
@@ -8,6 +9,12 @@ use Livewire\Volt\Component;
 new #[Layout('layouts.guest')] class extends Component
 {
     public LoginForm $form;
+    public int $trialDays = 14;
+
+    public function mount(HomepageContentService $homepage): void
+    {
+        $this->trialDays = max(1, $homepage->trialDays());
+    }
 
     /**
      * Handle an incoming authentication request.
@@ -19,6 +26,12 @@ new #[Layout('layouts.guest')] class extends Component
         $this->form->authenticate();
 
         Session::regenerate();
+
+        if (auth()->user()?->is_super_admin) {
+            $this->redirectIntended(default: route('admin.dashboard', absolute: false), navigate: true);
+
+            return;
+        }
 
         $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
@@ -70,5 +83,18 @@ new #[Layout('layouts.guest')] class extends Component
                 {{ __('Log in') }}
             </button>
         </div>
+
+        @if (Route::has('register'))
+            <p class="text-center text-sm text-stone-600 pt-2">
+                {{ __('New organisation?') }}
+                <a class="font-medium text-[#1a4535] hover:text-[#0f2f24] underline-offset-4 hover:underline"
+                   href="{{ route('register') }}" wire:navigate>
+                    Start {{ $trialDays }}-day free trial
+                </a>
+            </p>
+            <p class="text-center text-xs text-stone-500 pt-1">
+                <a href="{{ route('home') }}" wire:navigate class="hover:text-[#143529] underline-offset-4 hover:underline">View features & pricing</a>
+            </p>
+        @endif
     </form>
 </div>

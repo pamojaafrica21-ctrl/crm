@@ -33,7 +33,7 @@ new class extends Component
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h1 class="text-2xl font-bold text-slate-900">Performance Dashboard</h1>
-            <p class="mt-1 text-sm text-slate-500">Montana Resort overview for the selected dates.</p>
+            <p class="mt-1 text-sm text-slate-500">Organisation overview for the selected dates.</p>
         </div>
         <div class="flex items-center gap-3">
             <input type="date" wire:model.live="dateFrom" class="rounded-lg border-slate-200 text-sm">

@@ -1,10 +1,14 @@
 <?php
 
+use App\Http\Controllers\SeoController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Route::redirect('/', '/login');
+Volt::route('/', 'pages.home')->name('home');
 
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+Route::get('/llms.txt', [SeoController::class, 'llms'])->name('llms');
 Route::middleware(['auth', 'verified'])->group(function () {
     Volt::route('dashboard', 'pages.dashboard.index')->name('dashboard');
 
@@ -34,6 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Volt::route('reports', 'pages.reports.index')->name('reports.index');
     Volt::route('sync', 'pages.sync.index')->name('sync.index');
     Volt::route('announcements', 'pages.announcements.index')->name('announcements.index');
+
+    Volt::route('billing', 'pages.billing.index')->name('billing');
 
     Route::view('profile', 'profile')->name('profile');
 });

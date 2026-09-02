@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Organizations\Models\Organization;
 use App\Domain\Properties\Models\Property;
 use Illuminate\Database\Seeder;
 
@@ -9,27 +10,29 @@ class PropertySeeder extends Seeder
 {
     public function run(): void
     {
+        $org = Organization::whereIn('slug', ['demo-organisation', 'montana-resort'])->first();
+
         $attributes = [
-            'name' => 'Montana Resort',
+            'organization_id' => $org?->id,
+            'name' => 'Main Property',
             'timezone' => 'Africa/Nairobi',
             'currency' => 'USD',
-            'address' => 'Montana Resort',
+            'address' => '',
             'is_active' => true,
         ];
 
-        // Prefer the existing Montana record; otherwise upgrade the oldest property
-        // so demo data stays attached to the single company.
-        $montana = Property::where('code', 'MR')->first()
+        // Prefer the existing main property record; otherwise upgrade the oldest property.
+        $property = Property::whereIn('code', ['MAIN', 'MR'])->first()
             ?? Property::orderBy('id')->first();
 
-        if ($montana) {
-            $montana->update(array_merge($attributes, ['code' => 'MR']));
+        if ($property) {
+            $property->update(array_merge($attributes, ['code' => 'MAIN']));
         } else {
-            $montana = Property::create(array_merge($attributes, ['code' => 'MR']));
+            $property = Property::create(array_merge($attributes, ['code' => 'MAIN']));
         }
 
         Property::query()
-            ->where('id', '!=', $montana->id)
+            ->where('id', '!=', $property->id)
             ->update(['is_active' => false]);
     }
 }
