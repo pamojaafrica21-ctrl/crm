@@ -19,8 +19,8 @@ class HomepageContentService
             'headline' => PlatformSetting::getValue('homepage_headline', 'Run your property team from one CRM.') ?? 'Run your property team from one CRM.',
             'subheadline' => PlatformSetting::getValue(
                 'homepage_subheadline',
-                'Manage guests, quotes, invoices, tasks, and appointments — with billing that scales as your organisation grows.'
-            ) ?? 'Manage guests, quotes, invoices, tasks, and appointments — with billing that scales as your organisation grows.',
+                'Manage guests, quotes, invoices, tasks, appointments, and detailed reports — with billing that scales as your organisation grows.'
+            ) ?? 'Manage guests, quotes, invoices, tasks, appointments, and detailed reports — with billing that scales as your organisation grows.',
             'cta_label' => PlatformSetting::getValue('homepage_cta_label', 'Start free trial') ?? 'Start free trial',
         ];
     }
@@ -56,6 +56,11 @@ class HomepageContentService
                 'title' => 'Quotes & invoices',
                 'description' => 'Convert quotes to invoices, record payments, and monitor sales pipeline status.',
                 'image' => '/images/marketing/crm-sales.png',
+            ],
+            [
+                'title' => 'Reports & insights',
+                'description' => 'Open dedicated sales, finance, customer, operations, and performance reports — with charts, aging breakdowns, staff attribution, and CSV export.',
+                'image' => '/images/marketing/crm-reports-detail.png',
             ],
         ];
     }

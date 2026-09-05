@@ -49,12 +49,12 @@ class SubscriptionPlanSeeder extends Seeder
                 'features' => [
                     'max_properties' => 5,
                     'max_users' => 25,
-                    'modules' => ['customers', 'quotes', 'invoices', 'tasks', 'appointments', 'reports', 'targets', 'sync'],
+                    'modules' => ['customers', 'quotes', 'invoices', 'tasks', 'appointments', 'reports', 'targets', 'departments', 'roles'],
                     'highlights' => [
                         'Up to 5 properties',
                         'Up to 25 staff users',
                         'Reports & sales targets',
-                        'HMS sync',
+                        'Departments & roles',
                     ],
                     'is_featured' => true,
                     'badge' => 'Most popular',

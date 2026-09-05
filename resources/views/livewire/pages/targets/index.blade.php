@@ -11,7 +11,7 @@ new class extends Component
 
     public function with(): array
     {
-        return ['targets' => Target::with('assignments.user', 'creator')->latest()->paginate(15)];
+        return ['targets' => Target::with(['assignments.user', 'departments', 'creator'])->latest()->paginate(15)];
     }
 
     public function refreshProgress(int $targetId, TargetProgressService $service): void
@@ -35,6 +35,9 @@ new class extends Component
                         <div>
                             <h3 class="font-semibold text-slate-900">{{ $target->name }}</h3>
                             <p class="text-xs text-slate-500">{{ $target->metric->label() }} · {{ $target->period->label() }} · {{ $target->period_start->format('M j') }} – {{ $target->period_end->format('M j, Y') }}</p>
+                            @if ($target->departments->isNotEmpty())
+                                <p class="text-xs text-slate-500 mt-1">Depts: {{ $target->departments->pluck('name')->join(', ') }}</p>
+                            @endif
                         </div>
                         <button wire:click="refreshProgress({{ $target->id }})" class="text-xs text-indigo-600">Refresh</button>
                     </div>

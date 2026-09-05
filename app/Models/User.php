@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domain\Organizations\Models\Department;
 use App\Domain\Organizations\Models\Organization;
 use App\Domain\Properties\Models\Property;
 use Database\Factories\UserFactory;
@@ -17,7 +18,7 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'phone', 'department', 'is_active', 'organization_id', 'is_super_admin'])]
+#[Fillable(['name', 'email', 'password', 'phone', 'department', 'department_id', 'is_active', 'organization_id', 'is_super_admin'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -44,6 +45,11 @@ class User extends Authenticatable
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
+    }
+
+    public function assignedDepartment(): BelongsTo
+    {
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function properties(): BelongsToMany

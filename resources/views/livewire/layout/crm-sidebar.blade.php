@@ -16,7 +16,8 @@ new class extends Component
             ['route' => 'targets.index', 'label' => 'Targets', 'icon' => 'target', 'permission' => 'targets.view'],
             ['route' => 'reports.index', 'label' => 'Reports', 'icon' => 'reports', 'permission' => 'reports.view'],
             ['route' => 'staff.index', 'label' => 'Staff', 'icon' => 'staff', 'permission' => 'staff.view'],
-            ['route' => 'sync.index', 'label' => 'HMS Sync', 'icon' => 'sync', 'permission' => 'sync.view'],
+            ['route' => 'departments.index', 'label' => 'Departments', 'icon' => 'departments', 'permission' => 'departments.view'],
+            ['route' => 'roles.index', 'label' => 'Roles', 'icon' => 'roles', 'permission' => 'roles.view'],
             ['route' => 'announcements.index', 'label' => 'Announcements', 'icon' => 'bell', 'permission' => 'announcements.view'],
             ['route' => 'billing', 'label' => 'Billing', 'icon' => 'billing', 'permission' => 'billing.view', 'gate' => 'billing'],
         ];
@@ -52,7 +53,7 @@ new class extends Component
         @foreach ($this->navItems() as $item)
             <a href="{{ route($item['route']) }}" wire:navigate
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors
-                      {{ request()->routeIs(str_replace('.index', '.*', $item['route'])) || request()->routeIs($item['route'])
+                      {{ request()->routeIs(str_replace('.index', '.*', $item['route'])) || request()->routeIs($item['route']) || ($item['route'] === 'reports.index' && request()->routeIs('reports.*'))
                          ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                 <span class="w-5 h-5 flex items-center justify-center opacity-70">
                     @switch($item['icon'])
@@ -65,7 +66,8 @@ new class extends Component
                         @case('target') 🎯 @break
                         @case('reports') 📈 @break
                         @case('staff') 👤 @break
-                        @case('sync') 🔄 @break
+                        @case('departments') 🏢 @break
+                        @case('roles') 🔐 @break
                         @case('bell') 📢 @break
                         @case('billing') 💳 @break
                         @case('admin') 🛡️ @break

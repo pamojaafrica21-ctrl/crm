@@ -35,8 +35,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Volt::route('targets/create', 'pages.targets.create')->name('targets.create');
 
     Volt::route('staff', 'pages.staff.index')->name('staff.index');
+    Volt::route('departments', 'pages.departments.index')->name('departments.index');
+    Volt::route('roles', 'pages.roles.index')->name('roles.index');
     Volt::route('reports', 'pages.reports.index')->name('reports.index');
-    Volt::route('sync', 'pages.sync.index')->name('sync.index');
+    Volt::route('reports/sales', 'pages.reports.sales')->name('reports.sales');
+    Volt::route('reports/finance', 'pages.reports.finance')->name('reports.finance');
+    Volt::route('reports/customers', 'pages.reports.customers')->name('reports.customers');
+    Volt::route('reports/operations', 'pages.reports.operations')->name('reports.operations');
+    Volt::route('reports/performance', 'pages.reports.performance')->name('reports.performance');
     Volt::route('announcements', 'pages.announcements.index')->name('announcements.index');
 
     Volt::route('billing', 'pages.billing.index')->name('billing');

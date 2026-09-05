@@ -2,6 +2,7 @@
 
 namespace App\Domain\Targets\Models;
 
+use App\Domain\Organizations\Models\Department;
 use App\Domain\Properties\Models\Property;
 use App\Domain\Shared\Enums\TargetMetric;
 use App\Domain\Shared\Enums\TargetPeriod;
@@ -9,6 +10,7 @@ use App\Domain\Shared\Traits\BelongsToProperty;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -59,6 +61,11 @@ class Target extends Model
     public function assignments(): HasMany
     {
         return $this->hasMany(TargetAssignment::class);
+    }
+
+    public function departments(): BelongsToMany
+    {
+        return $this->belongsToMany(Department::class, 'department_target')->withTimestamps();
     }
 
     public function totalAssigned(): float

@@ -11,7 +11,7 @@ new class extends Component
     public function with(): array
     {
         return [
-            'appointments' => Appointment::with(['type', 'customer', 'assignee'])
+            'appointments' => Appointment::with(['type', 'customer', 'assignee', 'departments'])
                 ->orderBy('starts_at')
                 ->paginate(15),
         ];
@@ -34,6 +34,9 @@ new class extends Component
                             <div class="font-medium text-slate-900">{{ $appt->title }}</div>
                             <div class="text-xs text-slate-500">{{ $appt->type->name }} · {{ $appt->starts_at->format('M j, g:i A') }}</div>
                             @if ($appt->customer)<div class="text-xs text-slate-400">{{ $appt->customer->fullName() }}</div>@endif
+                            @if ($appt->departments->isNotEmpty())
+                                <div class="text-xs text-slate-400">Depts: {{ $appt->departments->pluck('name')->join(', ') }}</div>
+                            @endif
                         </div>
                     </div>
                     <span class="px-2 py-0.5 bg-slate-100 rounded-full text-xs">{{ $appt->status->label() }}</span>

@@ -15,6 +15,7 @@ class Announcement extends Model
         'title',
         'body',
         'target_roles',
+        'target_department_ids',
         'published_at',
         'expires_at',
     ];
@@ -23,6 +24,7 @@ class Announcement extends Model
     {
         return [
             'target_roles' => 'array',
+            'target_department_ids' => 'array',
             'published_at' => 'datetime',
             'expires_at' => 'datetime',
         ];

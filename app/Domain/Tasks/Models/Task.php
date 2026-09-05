@@ -3,6 +3,7 @@
 namespace App\Domain\Tasks\Models;
 
 use App\Domain\Customers\Models\Customer;
+use App\Domain\Organizations\Models\Department;
 use App\Domain\Properties\Models\Property;
 use App\Domain\Shared\Enums\TaskPriority;
 use App\Domain\Shared\Enums\TaskStatus;
@@ -10,6 +11,7 @@ use App\Domain\Shared\Traits\BelongsToProperty;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -64,6 +66,16 @@ class Task extends Model implements HasMedia
     public function assignee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function assignees(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'task_user')->withTimestamps();
+    }
+
+    public function departments(): BelongsToMany
+    {
+        return $this->belongsToMany(Department::class, 'department_task')->withTimestamps();
     }
 
     public function creator(): BelongsTo

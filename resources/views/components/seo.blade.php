@@ -9,7 +9,7 @@
 @php
     $appName = config('app.name', 'Core CRM');
     $pageTitle = $title ?: $appName.' | Hospitality CRM Software for Hotels, Resorts & Property Teams';
-    $pageDescription = $description ?: 'Core CRM is a multi-tenant hospitality CRM and property operations platform for hotels, resorts, lodges, and guest houses. Manage guests, bookings, quotes, invoices, staff tasks, appointments, and payments — with a free trial. Built by Pamoja Africa in Nairobi, Kenya.';
+    $pageDescription = $description ?: 'Core CRM is a multi-tenant hospitality CRM and property operations platform for hotels, resorts, lodges, and guest houses. Manage guests, bookings, quotes, invoices, staff tasks, appointments, payments, and detailed reports — with a free trial. Built by Pamoja Africa in Nairobi, Kenya.';
     $pageKeywords = $keywords ?: 'Core CRM, hospitality CRM software, hotel CRM, resort CRM, property management CRM, guest management system, hotel sales CRM, invoice and quote software for hotels, staff task management CRM, multi-tenant SaaS CRM Africa, Kenya hotel software, free trial CRM, Pamoja Africa';
     $canonicalUrl = $canonical ?: url()->current();
     $ogImage = asset('images/marketing/crm-dashboard.png');

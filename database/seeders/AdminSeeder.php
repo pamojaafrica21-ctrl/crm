@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Domain\Appointments\Models\AppointmentType;
+use App\Domain\Organizations\Models\Department;
 use App\Domain\Organizations\Models\Organization;
 use App\Domain\Properties\Models\Property;
 use App\Models\User;
@@ -17,6 +18,20 @@ class AdminSeeder extends Seeder
         $org = Organization::whereIn('slug', ['demo-organisation', 'montana-resort'])->first();
         $property = Property::whereIn('code', ['MAIN', 'MR'])->first() ?? Property::where('is_active', true)->first();
 
+        $management = null;
+        $salesDept = null;
+
+        if ($org) {
+            $management = Department::firstOrCreate(
+                ['organization_id' => $org->id, 'name' => 'Management'],
+                ['description' => 'Leadership and operations', 'is_active' => true]
+            );
+            $salesDept = Department::firstOrCreate(
+                ['organization_id' => $org->id, 'name' => 'Sales'],
+                ['description' => 'Sales and revenue', 'is_active' => true]
+            );
+        }
+
         $admin = User::firstOrCreate(
             ['email' => 'admin@crm.test'],
             [
@@ -24,6 +39,7 @@ class AdminSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
                 'department' => 'Management',
+                'department_id' => $management?->id,
                 'is_active' => true,
                 'organization_id' => $org?->id,
             ]
@@ -31,6 +47,11 @@ class AdminSeeder extends Seeder
 
         if ($org) {
             setPermissionsTeamId($org->id);
+            $admin->update([
+                'department' => 'Management',
+                'department_id' => $management?->id,
+                'organization_id' => $org->id,
+            ]);
         }
         $admin->assignRole('Administrator');
         if ($property) {
@@ -48,6 +69,7 @@ class AdminSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
                 'department' => 'Management',
+                'department_id' => $management?->id,
                 'is_active' => true,
                 'organization_id' => $org?->id,
             ]
@@ -71,6 +93,7 @@ class AdminSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
                 'department' => 'Sales',
+                'department_id' => $salesDept?->id,
                 'is_active' => true,
                 'organization_id' => $org?->id,
             ]
@@ -78,6 +101,11 @@ class AdminSeeder extends Seeder
 
         if ($org) {
             setPermissionsTeamId($org->id);
+            $sales->update([
+                'department' => 'Sales',
+                'department_id' => $salesDept?->id,
+                'organization_id' => $org->id,
+            ]);
         }
         $sales->assignRole('Sales');
         $sales->syncPermissions(

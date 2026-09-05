@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Organizations\Models\Department;
 use App\Domain\Properties\Models\Property;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -20,7 +21,7 @@ new class extends Component
     public string $name = '';
     public string $email = '';
     public string $phone = '';
-    public string $department = '';
+    public mixed $department_id = null;
     public string $role = '';
     public array $property_ids = [];
     public array $permissions = [];
@@ -32,7 +33,7 @@ new class extends Component
 
     public function with(): array
     {
-        $query = User::with(['roles.permissions', 'properties', 'permissions'])
+        $query = User::with(['roles.permissions', 'properties', 'permissions', 'assignedDepartment'])
             ->where('is_super_admin', false)
             ->orderBy('name');
 
@@ -56,9 +57,31 @@ new class extends Component
         return $query->get();
     }
 
+    public function departments()
+    {
+        $query = Department::where('is_active', true)->orderBy('name');
+
+        if (auth()->user()?->organization_id) {
+            $query->where('organization_id', auth()->user()->organization_id);
+        }
+
+        return $query->get();
+    }
+
     public function roles()
     {
-        return Role::orderBy('name')->get();
+        $orgId = auth()->user()?->organization_id;
+
+        return Role::query()
+            ->where(function ($query) use ($orgId) {
+                $query->whereNull('organization_id');
+
+                if ($orgId) {
+                    $query->orWhere('organization_id', $orgId);
+                }
+            })
+            ->orderBy('name')
+            ->get();
     }
 
     public function permissionGroups(): array
@@ -73,8 +96,9 @@ new class extends Component
             'appointments' => 'Appointments',
             'targets' => 'Targets',
             'staff' => 'Staff',
+            'departments' => 'Departments',
+            'roles' => 'Roles',
             'reports' => 'Reports',
-            'sync' => 'HMS Sync',
             'announcements' => 'Announcements',
             'billing' => 'Billing',
         ];
@@ -86,7 +110,6 @@ new class extends Component
             'delete' => 'Delete',
             'convert' => 'Convert',
             'export' => 'Export',
-            'run' => 'Run sync',
             'manage' => 'Manage subscription',
         ];
 
@@ -123,13 +146,13 @@ new class extends Component
     {
         $this->authorize('staff.update');
 
-        $user = User::with(['roles', 'properties', 'permissions'])->findOrFail($userId);
+        $user = User::with(['roles', 'properties', 'permissions', 'assignedDepartment'])->findOrFail($userId);
 
         $this->editingId = $user->id;
         $this->name = $user->name;
         $this->email = $user->email;
         $this->phone = $user->phone ?? '';
-        $this->department = $user->department ?? '';
+        $this->department_id = $user->department_id;
         $this->role = $user->roles->first()?->name ?? '';
         $this->property_ids = $user->properties->pluck('id')->map(fn ($id) => (string) $id)->all();
         $this->permissions = $user->getDirectPermissions()->isNotEmpty()
@@ -148,6 +171,10 @@ new class extends Component
                 : [];
 
             return;
+        }
+
+        if (auth()->user()?->organization_id) {
+            setPermissionsTeamId(auth()->user()->organization_id);
         }
 
         $role = Role::findByName($value);
@@ -173,29 +200,37 @@ new class extends Component
     {
         $this->authorize('staff.create');
 
+        $orgId = auth()->user()->organization_id;
+
         $this->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required|exists:roles,name',
+            'role' => 'required|string',
             'phone' => 'nullable|string|max:50',
-            'department' => 'nullable|string|max:100',
+            'department_id' => [
+                'nullable',
+                Rule::exists('departments', 'id')->where(fn ($query) => $query->where('organization_id', $orgId)->where('is_active', true)),
+            ],
             'property_ids' => 'array',
             'permissions' => 'array',
         ]);
+
+        $department = $this->resolveDepartment();
 
         $user = User::create([
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make('password'),
             'phone' => $this->phone ?: null,
-            'department' => $this->department ?: null,
+            'department_id' => $department?->id,
+            'department' => $department?->name,
             'email_verified_at' => now(),
             'is_active' => true,
-            'organization_id' => auth()->user()->organization_id,
+            'organization_id' => $orgId,
         ]);
 
-        if (auth()->user()->organization_id) {
-            setPermissionsTeamId(auth()->user()->organization_id);
+        if ($orgId) {
+            setPermissionsTeamId($orgId);
         }
         $user->syncRoles([$this->role]);
         $user->syncPermissions($this->role === 'Administrator' ? [] : $this->permissions);
@@ -210,13 +245,17 @@ new class extends Component
         $this->authorize('staff.update');
 
         $user = User::findOrFail($this->editingId);
+        $orgId = auth()->user()->organization_id;
 
         $this->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-            'role' => 'required|exists:roles,name',
+            'role' => 'required|string',
             'phone' => 'nullable|string|max:50',
-            'department' => 'nullable|string|max:100',
+            'department_id' => [
+                'nullable',
+                Rule::exists('departments', 'id')->where(fn ($query) => $query->where('organization_id', $orgId)->where('is_active', true)),
+            ],
             'property_ids' => 'array',
             'permissions' => 'array',
         ]);
@@ -227,15 +266,18 @@ new class extends Component
             return;
         }
 
+        $department = $this->resolveDepartment();
+
         $user->update([
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone ?: null,
-            'department' => $this->department ?: null,
+            'department_id' => $department?->id,
+            'department' => $department?->name,
         ]);
 
-        if (auth()->user()->organization_id) {
-            setPermissionsTeamId(auth()->user()->organization_id);
+        if ($orgId) {
+            setPermissionsTeamId($orgId);
         }
         $user->syncRoles([$this->role]);
         $user->syncPermissions($this->role === 'Administrator' ? [] : $this->permissions);
@@ -268,8 +310,17 @@ new class extends Component
 
     private function resetForm(): void
     {
-        $this->reset(['name', 'email', 'phone', 'department', 'role', 'property_ids', 'permissions']);
+        $this->reset(['name', 'email', 'phone', 'department_id', 'role', 'property_ids', 'permissions']);
         $this->resetValidation();
+    }
+
+    private function resolveDepartment(): ?Department
+    {
+        if ($this->department_id === null || $this->department_id === '') {
+            return null;
+        }
+
+        return $this->departments()->firstWhere('id', (int) $this->department_id);
     }
 
     private function defaultPropertyIds(): array
@@ -341,7 +392,20 @@ new class extends Component
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Department</label>
-                    <input type="text" wire:model="department" class="w-full rounded-lg border-slate-200">
+                    <select wire:model="department_id" class="w-full rounded-lg border-slate-200">
+                        <option value="">No department</option>
+                        @foreach ($this->departments() as $department)
+                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('department_id') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    @can('departments.create')
+                        <p class="mt-1 text-xs text-slate-500">
+                            Manage departments on the
+                            <a href="{{ route('departments.index') }}" wire:navigate class="text-indigo-600 hover:text-indigo-700">Departments</a>
+                            page.
+                        </p>
+                    @endcan
                 </div>
             </div>
 
@@ -351,7 +415,7 @@ new class extends Component
                     <select wire:model.live="role" class="w-full rounded-lg border-slate-200">
                         <option value="">Select role</option>
                         @foreach ($this->roles() as $r)
-                            <option value="{{ $r->name }}">{{ $r->name }}</option>
+                            <option value="{{ $r->name }}">{{ $r->name }}{{ is_null($r->organization_id) ? '' : ' (Custom)' }}</option>
                         @endforeach
                     </select>
                     <p class="mt-1 text-xs text-slate-500">Changing the role resets the access checklist to that role’s defaults.</p>
@@ -451,6 +515,7 @@ new class extends Component
                 <tr>
                     <th class="text-left px-4 py-3 font-medium">Name</th>
                     <th class="text-left px-4 py-3 font-medium">Email</th>
+                    <th class="text-left px-4 py-3 font-medium">Department</th>
                     <th class="text-left px-4 py-3 font-medium">Role</th>
                     <th class="text-left px-4 py-3 font-medium">Access</th>
                     <th class="text-left px-4 py-3 font-medium">Status</th>
@@ -469,6 +534,7 @@ new class extends Component
                     <tr class="{{ $editingId === $member->id ? 'bg-indigo-50/40' : '' }}">
                         <td class="px-4 py-3 font-medium text-slate-900">{{ $member->name }}</td>
                         <td class="px-4 py-3 text-slate-600">{{ $member->email }}</td>
+                        <td class="px-4 py-3 text-slate-600">{{ $member->assignedDepartment?->name ?? $member->department ?? '—' }}</td>
                         <td class="px-4 py-3">
                             <span class="inline-flex px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-700">
                                 {{ $member->roles->first()?->name ?? '—' }}

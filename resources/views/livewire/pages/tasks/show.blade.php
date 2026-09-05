@@ -16,7 +16,7 @@ new class extends Component
     public function mount(Task $task): void
     {
         $this->authorize('tasks.view');
-        $this->task = $task->load(['assignee', 'creator', 'customer', 'comments.user']);
+        $this->task = $task->load(['assignee', 'assignees', 'departments', 'creator', 'customer', 'comments.user']);
     }
 
     public function addComment(): void
@@ -52,6 +52,13 @@ new class extends Component
             <div class="flex gap-2 mt-2 text-xs">
                 <span class="px-2 py-0.5 bg-slate-100 rounded-full">{{ $task->status->label() }}</span>
                 <span class="px-2 py-0.5 bg-slate-100 rounded-full">{{ $task->priority->label() }}</span>
+            </div>
+            <div class="text-sm text-slate-500 mt-2">
+                Assigned:
+                {{ $task->assignees->isNotEmpty() ? $task->assignees->pluck('name')->join(', ') : ($task->assignee?->name ?? 'Unassigned') }}
+                @if ($task->departments->isNotEmpty())
+                    · Depts: {{ $task->departments->pluck('name')->join(', ') }}
+                @endif
             </div>
         </div>
         @if ($task->description)

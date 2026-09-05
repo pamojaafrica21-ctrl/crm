@@ -13,7 +13,7 @@ new class extends Component
     public function with(): array
     {
         return [
-            'tasks' => Task::with(['assignee', 'customer'])
+            'tasks' => Task::with(['assignee', 'assignees', 'departments', 'customer'])
                 ->when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
                 ->latest()
                 ->paginate(15),
@@ -50,7 +50,15 @@ new class extends Component
                     <div>
                         <a href="{{ route('tasks.show', $task) }}" wire:navigate class="font-medium text-slate-900 hover:text-indigo-600">{{ $task->title }}</a>
                         <div class="text-xs text-slate-500 mt-1">
-                            {{ $task->assignee?->name ?? 'Unassigned' }}
+                            @php
+                                $assigneeNames = $task->assignees->isNotEmpty()
+                                    ? $task->assignees->pluck('name')->join(', ')
+                                    : ($task->assignee?->name ?? 'Unassigned');
+                            @endphp
+                            {{ $assigneeNames }}
+                            @if ($task->departments->isNotEmpty())
+                                · {{ $task->departments->pluck('name')->join(', ') }}
+                            @endif
                             @if ($task->due_date) · Due {{ $task->due_date->format('M j') }} @endif
                             · <span class="capitalize">{{ $task->priority->label() }}</span>
                         </div>

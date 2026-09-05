@@ -117,7 +117,7 @@ TXT;
         $body = <<<MD
 # {$app}
 
-> {$app} is a multi-tenant hospitality CRM and property operations platform for hotels, resorts, lodges, guest houses, and property management teams. It helps organisations manage guests, quotes, invoices, appointments, staff tasks, sales targets, and subscription billing (Stripe and M-Pesa).
+> {$app} is a multi-tenant hospitality CRM and property operations platform for hotels, resorts, lodges, guest houses, and property management teams. It helps organisations manage guests, quotes, invoices, appointments, staff tasks, sales targets, detailed reports, and subscription billing (Stripe and M-Pesa).
 
 Core CRM is a product of [{$pamoja}]({$pamojaUrl}), a Nairobi-based custom software studio building systems for African businesses.
 

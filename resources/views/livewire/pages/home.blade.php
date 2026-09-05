@@ -106,7 +106,7 @@ new #[Layout('layouts.marketing')] class extends Component
         <div class="mx-auto max-w-6xl px-6 py-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
                 <p class="font-display text-3xl sm:text-4xl text-[var(--ink)]">{{ $trialDays }} days free</p>
-                <p class="mt-2 text-[var(--ink-soft)]/80 max-w-md">Create your organisation and explore the full hospitality CRM — guest management, quotes, invoices, and property operations. No card required to start.</p>
+                <p class="mt-2 text-[var(--ink-soft)]/80 max-w-md">Create your organisation and explore the full hospitality CRM — guests, quotes, invoices, reports, and property operations. No card required to start.</p>
             </div>
             <a href="{{ route('register') }}" wire:navigate class="text-sm font-semibold text-[var(--accent)] hover:text-[var(--ink)] underline-offset-4 hover:underline">
                 Start your free trial →
@@ -118,7 +118,7 @@ new #[Layout('layouts.marketing')] class extends Component
     <section id="product" class="mx-auto max-w-6xl px-6 py-20 sm:py-28 space-y-28">
         <div class="max-w-2xl">
             <h2 class="font-display text-4xl sm:text-5xl leading-tight text-[var(--ink)]">Hotel &amp; resort CRM built for property teams</h2>
-            <p class="mt-4 text-lg text-[var(--ink-soft)]/75 leading-relaxed">Guest relationship management, sales quotes, invoices, staff tasks, and reporting — organised by property for hotels, resorts, lodges, and guest houses.</p>
+            <p class="mt-4 text-lg text-[var(--ink-soft)]/75 leading-relaxed">Guest relationship management, sales quotes, invoices, staff tasks, and detailed reporting — organised by property for hotels, resorts, lodges, and guest houses.</p>
         </div>
 
         @foreach ($features as $index => $feature)
@@ -255,7 +255,7 @@ new #[Layout('layouts.marketing')] class extends Component
                         <span class="font-display text-xl text-[var(--ink)]">{{ $appName }}</span>
                     </a>
                     <p class="mt-4 text-sm leading-relaxed text-[var(--ink-soft)]/75 max-w-xs">
-                        Hospitality CRM software for hotels, resorts, and property teams — guests, quotes, invoices, appointments, and operations in one place.
+                        Hospitality CRM software for hotels, resorts, and property teams — guests, quotes, invoices, appointments, reports, and operations in one place.
                     </p>
                 </div>
 

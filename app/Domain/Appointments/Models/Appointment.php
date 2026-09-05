@@ -3,12 +3,14 @@
 namespace App\Domain\Appointments\Models;
 
 use App\Domain\Customers\Models\Customer;
+use App\Domain\Organizations\Models\Department;
 use App\Domain\Properties\Models\Property;
 use App\Domain\Shared\Enums\AppointmentStatus;
 use App\Domain\Shared\Traits\BelongsToProperty;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -64,6 +66,11 @@ class Appointment extends Model
     public function assignee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function departments(): BelongsToMany
+    {
+        return $this->belongsToMany(Department::class, 'appointment_department')->withTimestamps();
     }
 
     public function creator(): BelongsTo
