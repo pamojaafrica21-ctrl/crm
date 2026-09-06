@@ -8,9 +8,9 @@
 
 @php
     $appName = config('app.name', 'Core CRM');
-    $pageTitle = $title ?: $appName.' | Hospitality CRM Software for Hotels, Resorts & Property Teams';
-    $pageDescription = $description ?: 'Core CRM is a multi-tenant hospitality CRM and property operations platform for hotels, resorts, lodges, and guest houses. Manage guests, bookings, quotes, invoices, staff tasks, appointments, payments, and detailed reports — with a free trial. Built by Pamoja Africa in Nairobi, Kenya.';
-    $pageKeywords = $keywords ?: 'Core CRM, hospitality CRM software, hotel CRM, resort CRM, property management CRM, guest management system, hotel sales CRM, invoice and quote software for hotels, staff task management CRM, multi-tenant SaaS CRM Africa, Kenya hotel software, free trial CRM, Pamoja Africa';
+    $pageTitle = $title ?: $appName.' | CRM Software for Every Industry';
+    $pageDescription = $description ?: 'Core CRM is a multi-tenant CRM and business operations platform for organisations in every industry. Manage customers, quotes, invoices, staff tasks, appointments, payments, and detailed reports — with a free trial. Built by Pamoja Africa in Nairobi, Kenya.';
+    $pageKeywords = $keywords ?: 'Core CRM, CRM software, multi-industry CRM, customer relationship management, sales CRM, invoice and quote software, staff task management CRM, multi-tenant SaaS CRM Africa, Kenya CRM software, free trial CRM, Pamoja Africa';
     $canonicalUrl = $canonical ?: url()->current();
     $ogImage = asset('images/marketing/crm-dashboard.png');
 @endphp
@@ -31,7 +31,7 @@
 <meta property="og:description" content="{{ $pageDescription }}">
 <meta property="og:url" content="{{ $canonicalUrl }}">
 <meta property="og:image" content="{{ $ogImage }}">
-<meta property="og:image:alt" content="{{ $appName }} hospitality CRM dashboard">
+<meta property="og:image:alt" content="{{ $appName }} CRM dashboard">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ $pageTitle }}">

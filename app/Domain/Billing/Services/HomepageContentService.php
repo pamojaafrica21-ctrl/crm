@@ -15,12 +15,12 @@ class HomepageContentService
     public function hero(): array
     {
         return [
-            'eyebrow' => PlatformSetting::getValue('homepage_eyebrow', 'Property operations platform') ?? 'Property operations platform',
-            'headline' => PlatformSetting::getValue('homepage_headline', 'Run your property team from one CRM.') ?? 'Run your property team from one CRM.',
+            'eyebrow' => PlatformSetting::getValue('homepage_eyebrow', 'CRM for every industry') ?? 'CRM for every industry',
+            'headline' => PlatformSetting::getValue('homepage_headline', 'Run your business from one CRM.') ?? 'Run your business from one CRM.',
             'subheadline' => PlatformSetting::getValue(
                 'homepage_subheadline',
-                'Manage guests, quotes, invoices, tasks, appointments, and detailed reports — with billing that scales as your organisation grows.'
-            ) ?? 'Manage guests, quotes, invoices, tasks, appointments, and detailed reports — with billing that scales as your organisation grows.',
+                'Manage customers, quotes, invoices, tasks, appointments, and detailed reports — built for teams in every industry, with billing that scales as your organisation grows.'
+            ) ?? 'Manage customers, quotes, invoices, tasks, appointments, and detailed reports — built for teams in every industry, with billing that scales as your organisation grows.',
             'cta_label' => PlatformSetting::getValue('homepage_cta_label', 'Start free trial') ?? 'Start free trial',
         ];
     }
@@ -44,12 +44,12 @@ class HomepageContentService
         return [
             [
                 'title' => 'Performance dashboard',
-                'description' => 'Track revenue, outstanding balances, bookings, and team activity in one place.',
+                'description' => 'Track revenue, outstanding balances, pipeline activity, and team performance in one place.',
                 'image' => '/images/marketing/crm-dashboard.png',
             ],
             [
-                'title' => 'Guest & customer CRM',
-                'description' => 'Keep guest profiles, segments, notes, and communication history organised by property.',
+                'title' => 'Customer CRM',
+                'description' => 'Keep customer profiles, segments, notes, and communication history organised by location or team.',
                 'image' => '/images/marketing/crm-customers.png',
             ],
             [

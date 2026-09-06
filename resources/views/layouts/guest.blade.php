@@ -39,7 +39,7 @@
                         Welcome back.
                     </h1>
                     <p class="mt-5 text-base sm:text-lg text-emerald-50/75 leading-relaxed max-w-md">
-                        Sign in to manage guests, quotes, invoices, and day-to-day operations for your organisation.
+                        Sign in to manage customers, quotes, invoices, and day-to-day operations for your organisation.
                     </p>
                 </div>
 
